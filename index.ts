@@ -43,10 +43,18 @@ function getUserByEmail(email: string): UserEntry | undefined {
   return user;
 }
 
-// TODO - It needs to be changed to POST because GET method is not safe for password transfer.
-// Didn't find how to debug various HTTP methods here.
-// /register?username=test&email=test@test.com&type=user&password=gfjj33%FF
-// Request body -> UserDto
+// GET /register?username=test&email=test@test.com&type=user&password=gfjj33%FF
+
+// POST /register
+// {
+//  username: 'test',
+//  'email': 'test@test.com',
+//  'type': 'user',
+//  'password': 'gfjj33%FF',
+// }
+
+// POST (correct implementation of this case)
+// app.post('/register', async (req: Request, res: Response) => {
 app.get('/register', async (req: Request, res: Response) => {
   // Validate user object using joi
   // - username (required, min 3, max 24 characters)
@@ -65,6 +73,7 @@ app.get('/register', async (req: Request, res: Response) => {
     type: joi.string().valid('admin', 'user').required(),
   });
 
+  //const userData: UserDto | any = req.body; // POST (correct implementation of this case)
   const userData: UserDto | any = req.query;
 
   const { error } = schema.validate(userData);
@@ -87,11 +96,18 @@ app.get('/register', async (req: Request, res: Response) => {
   res.status(200).json({ message: 'Success' });
 });
 
-// TODO - It needs to be changed to POST because GET method is not safe for password transfer.
-// Didn't find how to debug various HTTP methods here.
-// /login?username=test&password=gfjj33%FF
-// Request body -> { username: string, password: string }
+// GET /login?username=test&password=gfjj33%FF
+
+// POST /login
+// {
+//  username: 'test',
+//  password: 'gfjj33%FF',
+// }
+
+// POST (correct implementation of this case)
+// app.post('/login', async (req: Request, res: Response) => {
 app.get('/login', async (req: Request, res: Response) => {
+  //const userData: UserDto | any = req.body; // POST (correct implementation of this case)
   const userData: UserDto | any = req.query;
   const user = getUserByUsername(userData.username);
 
